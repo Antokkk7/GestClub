@@ -3,9 +3,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ihm2025</groupId>
-    <artifactId>GestClubTP1</artifactId>
-    <version>0.1</version>
-    <name>GestClub v1</name>
+    <artifactId>GestClub</artifactId>
+    <version>3.3</version>
+    <name>GestClub v2</name>
 
     <properties>
         <iut.ihm.mainClass>gestclub.Main</iut.ihm.mainClass>
