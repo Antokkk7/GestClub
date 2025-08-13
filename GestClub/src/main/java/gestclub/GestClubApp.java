@@ -1,15 +1,27 @@
 package gestclub;
 	
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+// import java.io.InputStream;
+// import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import gestclub.model.EtatMembre;
 import gestclub.model.Membre;
 import gestclub.view.ListeMembresController;
 import gestclub.view.SaisieMembreController;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+// import javafx.collections.FXCollections;
+// import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -20,10 +32,51 @@ import javafx.scene.layout.BorderPane;
 public class GestClubApp extends Application {
 	
 	private BorderPane rootPane;
-	private Stage      primaryStage;
+	private Stage primaryStage;
 	
-	private final ObservableList<Membre> listeMembres = FXCollections.observableArrayList();
-	
+    private static final Path MEMBRES_PATH = Paths.get("data", "Membres.txt");
+    private List<Membre> listeMembres = new ArrayList<>();
+    
+    public GestClubApp() {
+        loadMembres();
+    }
+
+    private void loadMembres() {
+
+    if (!Files.exists(MEMBRES_PATH)) {
+        return;
+    }
+
+    try (BufferedReader reader = Files.newBufferedReader(MEMBRES_PATH, StandardCharsets.UTF_8)) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(";");
+            if (parts.length < 6) continue;
+
+            String nom    = parts[0].trim();
+            String prenom = parts[1].trim();
+            EtatMembre etat = EtatMembre.valueOf(parts[2].trim());
+            String ville  = parts[3].trim();
+
+            String[] dd = parts[4].split(",");
+            int year  = Integer.parseInt(dd[0].trim());
+            int month = Integer.parseInt(dd[1].trim());
+            int day   = Integer.parseInt(dd[2].trim());
+            LocalDate dateInscription = LocalDate.of(year, month, day);
+
+            String notes = parts[5].trim();
+            listeMembres.add(new Membre(nom, prenom, etat, ville, dateInscription, notes));
+        }
+    } catch (IOException e) {
+        // e.printStackTrace();
+    }
+	}
+
+
+	/** private final ObservableList<Membre> listeMembres = FXCollections.observableArrayList();
+
+	// Ancienne version pour créer des membres placeholder
+
 	public GestClubApp() {
 		// Création de quelques membres de départ dans liste Membre
 		// code temporaire en attendant d'avoir les méthodes le sauvegarde/restauration en base ou dans des fichiers.
@@ -31,12 +84,14 @@ public class GestClubApp extends Application {
         this.listeMembres.add(new Membre("Brown", "Emet", EtatMembre.Ancien, "Paris", LocalDate.of(1855, 9, 12), "Chercheur fou" ));
 		this.listeMembres.add(new Membre("D'Idrila", "Argenti", EtatMembre.Ancien, "Espace", LocalDate.of(1310, 2, 14), "Chevalier de la beauté" ));
 	}
-	
+	*/
+
+
 	@Override
 	public void start(Stage primaryStage) {
 		
 		this.primaryStage = primaryStage;
-		this.rootPane     = new BorderPane();
+		this.rootPane = new BorderPane();
 		
 		Scene scene = new Scene(rootPane);
 		scene.getStylesheets().add(GestClubApp.class.getResource("style.css").toExternalForm());
@@ -44,7 +99,6 @@ public class GestClubApp extends Application {
 		primaryStage.setScene(scene);
 
 		loadListeMembre();
-		//showSaisieMembre();
 
 		primaryStage.show();		
 		
@@ -89,7 +143,6 @@ public class GestClubApp extends Application {
 			SaisieMembreController ctrl = loader.getController();
 			ctrl.setDialogStage(dialogStage);
 			
-			// dialogStage.show();
 			dialogStage.showAndWait();
 			if(ctrl.getMembre()!=null)this.listeMembres.add(ctrl.getMembre());
 			return ctrl.getMembre();
@@ -120,7 +173,7 @@ public class GestClubApp extends Application {
 			
 			SaisieMembreController ctrl = loader.getController();
 			ctrl.setDialogStage(dialogStage);
-			// dialogStage.show();
+
 			ctrl.setMembre(membre);
 			dialogStage.showAndWait();
 
@@ -133,6 +186,35 @@ public class GestClubApp extends Application {
 		}	
 	}
 	
+	public void saveLocal() {
+    try {
+        Files.createDirectories(MEMBRES_PATH.getParent());
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                  MEMBRES_PATH,
+                  StandardCharsets.UTF_8,
+                  StandardOpenOption.CREATE,
+                  StandardOpenOption.TRUNCATE_EXISTING)) {
+            
+				DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy,MM,dd");
+            
+
+            for (Membre m : listeMembres) {
+                String line = "" +
+                    m.getNom() +";" +
+                    m.getPrenom() +";" +
+                    m.getEtat() +";" +
+                    m.getVille() +";" +
+                    m.getDateInscription().format(fmt) +";" +
+                    m.getNotes()
+                ;
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    } catch (IOException e) {
+        // e.printStackTrace();
+    }
+}
 	
 	@Override
 	public void stop() throws Exception {
@@ -143,9 +225,12 @@ public class GestClubApp extends Application {
 		this.listeMembres.remove(index);
 	}
 
+	public void retraitDB(int index) {
+    	listeMembres.remove(index);
+    	saveLocal();
+	}
+	
 	public static void main2(String[] args) {
 		launch(args);
 	}
-
-	
 }

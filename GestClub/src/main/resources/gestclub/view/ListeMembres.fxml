@@ -29,7 +29,7 @@
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" prefHeight="55.0" prefWidth="906.0" text="Gestion des membres" textAlignment="CENTER">
+            <Label alignment="CENTER" prefHeight="55.0" prefWidth="906.0" text="Gestion des flux de membres" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
@@ -59,7 +59,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="?">
             <items>
-              <MenuItem mnemonicParsing="false" text="A propos" />
+              <MenuItem mnemonicParsing="false" text="A propos" onAction="#Interog"/>
             </items>
           </Menu>
         </menus>

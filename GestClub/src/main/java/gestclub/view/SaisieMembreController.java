@@ -1,6 +1,12 @@
 package gestclub.view;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ResourceBundle;
 
 import gestclub.model.EtatMembre;
@@ -43,11 +49,14 @@ public class SaisieMembreController implements Initializable {
 	public void setDialogStage(Stage dialogStage) {
 		this.dialogStage = dialogStage;
 	}
+
+    private static final Path MEMBRES_PATH = Paths.get("data", "Membres.txt");
+    
 	public Membre getMembre() {
 		return this.membre;
 	}
 
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -56,8 +65,6 @@ public class SaisieMembreController implements Initializable {
 	private void actionOk() {
 		String erreurs = this.trouverErreursSaisie();
 		if (erreurs.length()>0) {
-			// System.out.println("Saisie incorrecte :");
-			// System.out.println(erreurs);
 			Alert erreur = new Alert(AlertType.ERROR);
 			erreur.setTitle("Mauvaise saisie...");
 			erreur.setHeaderText(erreurs);
@@ -67,8 +74,8 @@ public class SaisieMembreController implements Initializable {
 		} else {
 			Membre newM = this.creerMembre();
 			this.membre = newM;
-			// System.out.println("OK on va ajouter un membre : ");
-			// System.out.println( newM );
+
+        	appendMembreToFile(newM);
 			this.dialogStage.close();
 		}
 	}
@@ -82,16 +89,16 @@ public class SaisieMembreController implements Initializable {
 		String erreurs = "";
 		
 		if (txtNom.getText().trim().length()<3) {
-			erreurs += "Le nom est obligatoire et doit avoir plus de 2 lettres\n";
+			erreurs += "- Le nom est obligatoire et >= 2 lettres\n";
 		}
 		if (txtPrenom.getText().trim().length()<3) {
-			erreurs += "Le prénom est obligatoire et doit avoir plus de 2 lettres\n";
-		}
-		if ( datePickInscription.getValue() == null ) {
-			erreurs += "La date d'inscription est obligatoire\n";
+			erreurs += "- Le prénom est obligatoire et >= 2 lettres\n";
 		}
 		if ( !radioButAncien.isSelected() && !radioButMembre.isSelected() && !radioButProspect.isSelected() ) {
-			erreurs += "Il faut préciser un état pour ce membre\n";
+			erreurs += "- Il faut préciser un état pour ce membre\n";
+		}
+		if ( datePickInscription.getValue() == null ) {
+			erreurs += "- La date d'inscription est obligatoire\n";
 		}
 		
 		return erreurs;
@@ -132,4 +139,32 @@ public class SaisieMembreController implements Initializable {
 		if(membre.getEtat()==EtatMembre.Prospect)radioButProspect.setSelected(true);
 	}
 
+	/**
+ 	* Ajoute le membre fourni à la fin du fichier Membres.txt
+ 	*/
+	private void appendMembreToFile(Membre m) {
+    	String line = String.format("%s;%s;%s;%s;%d, %d, %d;%s%n",
+        	m.getNom(),
+        	m.getPrenom(),
+        	m.getEtat().name(),
+        	m.getVille(),
+        	m.getDateInscription().getYear(),
+        	m.getDateInscription().getMonthValue(),
+        	m.getDateInscription().getDayOfMonth(),
+        	m.getNotes().replace("\n", " ")
+    );
+
+    try {
+        Files.createDirectories(MEMBRES_PATH.getParent());
+
+        Files.write(
+            MEMBRES_PATH,
+            line.getBytes(StandardCharsets.UTF_8),
+            StandardOpenOption.CREATE,
+            StandardOpenOption.APPEND
+        );
+    } catch (IOException e) {
+        // e.printStackTrace();
+    }
+}
 }

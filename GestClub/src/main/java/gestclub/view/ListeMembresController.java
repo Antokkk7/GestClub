@@ -73,16 +73,18 @@ public class ListeMembresController implements Initializable {
 			Membre retour=getClubApp.editSaisieMembre(membre);
 			if(retour!=null){
 				listViewMembres.getItems().set(index, retour);
+
+				// getClubApp.remove(index);
+
 			}
 		} else{
-			sellectionneZebi();
+			Selection();
 		}
-		
 	}
 	@FXML
 	private void actionSupprimer() {
 		int index = listViewMembres.getSelectionModel().getSelectedIndex();
-		if(index==-1)sellectionneZebi();
+		if(index==-1)Selection();
 		else{
 			Alert confirm = new Alert(AlertType.CONFIRMATION);
 			confirm.setTitle("Suppression");
@@ -92,7 +94,7 @@ public class ListeMembresController implements Initializable {
 			Optional<ButtonType> rep = confirm.showAndWait();
 			if(rep.orElse(null) == ButtonType.YES) {
 				listViewMembres.getItems().remove(index);
-				getClubApp.remove(index);
+				getClubApp.retraitDB(index);
 				Alert cBon = new Alert(AlertType.INFORMATION);
 				cBon.setTitle("Confirmation");
 				cBon.setHeaderText("Suppression réussie");
@@ -102,15 +104,20 @@ public class ListeMembresController implements Initializable {
 		}
 	}
 
-	private void sellectionneZebi(){
+	@FXML
+    private void Interog() {
+        Alert confirm = new Alert(Alert.AlertType.INFORMATION);
+        confirm.setTitle("Gestion de Club");
+        confirm.setHeaderText("Gestion d'un Club");
+        confirm.setContentText("Fait par un étudiant");
+        confirm.getButtonTypes().setAll(ButtonType.OK);
+        confirm.showAndWait();
+    }
+
+	private void Selection(){
 			Alert erreur = new Alert(AlertType.ERROR);
 			erreur.setTitle("Erreur de selection");
 			erreur.setHeaderText("Veuillez sélectionner un membre pour continuer.");
 			erreur.showAndWait();
 	}
-
-	
-
-	
-
 }
