@@ -34,7 +34,7 @@ public class GestClubApp extends Application {
 	private BorderPane rootPane;
 	private Stage primaryStage;
 	
-    private static final Path MEMBRES_PATH = Paths.get("data", "Membres.txt");
+    private static final Path data_local = Paths.get("data", "Membres.txt");
     private List<Membre> listeMembres = new ArrayList<>();
     
     public GestClubApp() {
@@ -43,11 +43,11 @@ public class GestClubApp extends Application {
 
     private void loadMembres() {
 
-    if (!Files.exists(MEMBRES_PATH)) {
+    if (!Files.exists(data_local)) {
         return;
     }
 
-    try (BufferedReader reader = Files.newBufferedReader(MEMBRES_PATH, StandardCharsets.UTF_8)) {
+    try (BufferedReader reader = Files.newBufferedReader(data_local, StandardCharsets.UTF_8)) {
         String line;
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split(";");
@@ -188,9 +188,9 @@ public class GestClubApp extends Application {
 	
 	public void saveLocal() {
     try {
-        Files.createDirectories(MEMBRES_PATH.getParent());
+        Files.createDirectories(data_local.getParent());
         try (BufferedWriter writer = Files.newBufferedWriter(
-                  MEMBRES_PATH,
+                  data_local,
                   StandardCharsets.UTF_8,
                   StandardOpenOption.CREATE,
                   StandardOpenOption.TRUNCATE_EXISTING)) {
