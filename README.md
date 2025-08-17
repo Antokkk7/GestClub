@@ -1,4 +1,4 @@
-# GestClub
+# GestClub 2025
 • *Gestion des membres d'un club* </br>  </br>
 
 • Version de Java :
@@ -19,7 +19,7 @@
 </br>
 
 • Version de VScode :
-> v1.100.3
+> v1.103.1
 
 </br>
 

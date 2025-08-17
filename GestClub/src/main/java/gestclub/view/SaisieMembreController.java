@@ -50,17 +50,16 @@ public class SaisieMembreController implements Initializable {
 		this.dialogStage = dialogStage;
 	}
 
-    private static final Path MEMBRES_PATH = Paths.get("data", "Membres.txt");
+    private static final Path data_local = Paths.get("data", "Membres.txt");
     
 	public Membre getMembre() {
 		return this.membre;
 	}
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 	}
+
 	@FXML
 	private void actionOk() {
 		String erreurs = this.trouverErreursSaisie();
@@ -79,6 +78,7 @@ public class SaisieMembreController implements Initializable {
 			this.dialogStage.close();
 		}
 	}
+
 	@FXML
 	private void actionAnnuler() {
 		this.membre = null;
@@ -103,6 +103,7 @@ public class SaisieMembreController implements Initializable {
 		
 		return erreurs;
 	}
+	
 	/**
 	 * Créer un Membre en partant des valeurs saisies.
 	 * 
@@ -126,7 +127,7 @@ public class SaisieMembreController implements Initializable {
 				);
 		return newMembre;
 	}
-
+	
 	public void setMembre(Membre membre) {
 		this.membre=membre;
 		txtNom.setText(membre.getNom());
@@ -139,9 +140,6 @@ public class SaisieMembreController implements Initializable {
 		if(membre.getEtat()==EtatMembre.Prospect)radioButProspect.setSelected(true);
 	}
 
-	/**
- 	* Ajoute le membre fourni à la fin du fichier Membres.txt
- 	*/
 	private void appendMembreToFile(Membre m) {
     	String line = String.format("%s;%s;%s;%s;%d, %d, %d;%s%n",
         	m.getNom(),
@@ -155,10 +153,10 @@ public class SaisieMembreController implements Initializable {
     );
 
     try {
-        Files.createDirectories(MEMBRES_PATH.getParent());
+        Files.createDirectories(data_local.getParent());
 
         Files.write(
-            MEMBRES_PATH,
+            data_local,
             line.getBytes(StandardCharsets.UTF_8),
             StandardOpenOption.CREATE,
             StandardOpenOption.APPEND
