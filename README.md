@@ -23,11 +23,10 @@
 
 </br>
 
-Rôles dans le projet :
+## Crédits
 
-    Client : IUT Blagnac Toulouse II
-    
-    Développeur : Antokkk7
+| <a href="https://github.com/Antokkk7"><img src="https://github.com/Antokkk7.png" width="70"></a> | <a href="https://github.com/ZakapiaFR"><img src="https://github.com/ZakapiaFR.png" width="70"></a> | <a href="https://github.com/AdamLab5"><img src="https://github.com/AdamLab5.png" width="70"></a> | <a href="https://github.com/hanhai9"><img src="https://github.com/hanhai9.png" width="70"></a> | <a href="https://github.com/bala712115"><img src="https://github.com/bala712115.png" width="70"></a> 
+|---|---|---|---|---|
+| **Antokkk7**<br>Développeur | **ZakapiaFR**<br>Développeur | **AdamLab5**<br>Développeur | **hanhai9**<br>Développeur | **bala712115**<br>Développeur
 
-</br>
 Ceci est un projet Universitaire en <ins>javaFX</ins>.
